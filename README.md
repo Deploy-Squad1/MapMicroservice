@@ -15,12 +15,12 @@ Built with Go and PostgreSQL/PostGIS.
 Create a `.env` file in the root directory with your database and JWT credentials:
 
 ```
-JWT_SECRET=your_secret_key
-DB_USER=postgres
-DB_PASSWORD=admin
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=core_db
+JWT_SECRET=your_jwt_secret_key
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_HOST=your_db_host
+DB_PORT=your_db_port
+DB_NAME=your_db_name
 ```
 
 Install dependencies and run the development server:
@@ -28,6 +28,16 @@ Install dependencies and run the development server:
 ```
 go mod download
 go run ./cmd/api/main.go
+```
+
+Install PostGIS:
+```
+# For Debian/Ubuntu-based systems
+sudo apt update
+sudo apt install postgresql-postgis
+# For Windows, use the StackBuilder tool to add PostGIS to your PostgreSQL installation.
+```
+
 ```
 
 API runs on: http://localhost:8080
