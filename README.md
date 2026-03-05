@@ -27,7 +27,7 @@ DB_PORT=your_db_port
 DB_NAME=your_db_name
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
-AWS_REGION=eu-central-1
+AWS_REGION=your_region
 AWS_BUCKET_NAME=your_bucket_name
 ```
 
@@ -54,7 +54,7 @@ API runs on: http://localhost:8080
 
 Build and run the container:
 
-```
+
 docker build -t map-service .
 docker run -d -p 8080:8080 --env-file .env --name map-app map-service
 ```
