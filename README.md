@@ -5,14 +5,18 @@ Server-side application for the interactive map feature.
 ## Features
 
 - Artifact management (CRUD operations)
+- Photo upload to AWS S3 bucket with presigned URLs
+- Artifact confirmation by other users
+- Confirmation count tracking
 - JWT-based Role-Based Access Control (RBAC)
 - Automated database migrations
+- PostGIS geospatial queries
 
-Built with Go and PostgreSQL/PostGIS.
+Built with Go, PostgreSQL/PostGIS, and AWS S3.
 
 ## Setup Project
 
-Create a `.env` file in the root directory with your database and JWT credentials:
+Create a `.env` file in the `map-service` directory with your database, JWT, and AWS credentials:
 
 ```
 JWT_SECRET=your_jwt_secret_key
@@ -21,6 +25,10 @@ DB_PASSWORD=your_db_password
 DB_HOST=your_db_host
 DB_PORT=your_db_port
 DB_NAME=your_db_name
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_REGION=eu-central-1
+AWS_BUCKET_NAME=your_bucket_name
 ```
 
 Install dependencies and run the development server:

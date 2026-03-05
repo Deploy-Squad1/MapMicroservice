@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -43,13 +44,19 @@ func main() {
 	fmt.Println("Connected to PostgreSQL/PostGIS!")
 
 	store := storage.New(db)
-	artifactHandler := handlers.NewArtifactHandler(store)
+	s3Storage, err := storage.NewS3Storage(context.Background())
+	if err != nil {
+		log.Fatal("Failed to initialize S3 storage:", err)
+	}
+	artifactHandler := handlers.NewArtifactHandler(store, s3Storage)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/artifacts", middlewares.RequireRole()(artifactHandler.GetArtifacts))
 	mux.HandleFunc("POST /api/artifacts", middlewares.RequireRole("Silver", "Gold")(artifactHandler.CreateArtifact))
 	mux.HandleFunc("DELETE /api/artifacts/{id}", middlewares.RequireRole("Gold")(artifactHandler.DeleteArtifact))
-
+	mux.HandleFunc("POST /api/artifacts/{id}/photo", middlewares.RequireRole("Silver", "Gold")(artifactHandler.UploadPhoto))
+	mux.HandleFunc("POST /api/artifacts/{id}/confirm", middlewares.RequireRole()(artifactHandler.ConfirmArtifact))
+	mux.HandleFunc("DELETE /api/artifacts/{id}/unconfirm", middlewares.RequireRole()(artifactHandler.RemoveConfirmation))
 	handlerWithCORS := middlewares.CORS(mux)
 
 	fmt.Println("Server is running on http://localhost:8080")
