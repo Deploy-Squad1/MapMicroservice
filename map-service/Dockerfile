@@ -6,7 +6,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o map-service ./cmd/api/main.go
+RUN go build -o map-service ./cmd/api
 
 FROM alpine:3.23
 WORKDIR /app
