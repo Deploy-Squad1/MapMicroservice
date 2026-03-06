@@ -57,6 +57,10 @@ func main() {
 	mux.HandleFunc("POST /api/artifacts/{id}/photo", middlewares.RequireRole("Silver", "Gold")(artifactHandler.UploadPhoto))
 	mux.HandleFunc("POST /api/artifacts/{id}/confirm", middlewares.RequireRole()(artifactHandler.ConfirmArtifact))
 	mux.HandleFunc("DELETE /api/artifacts/{id}/unconfirm", middlewares.RequireRole()(artifactHandler.RemoveConfirmation))
+	// Internal endpoints
+	databaseMigrationHandler := handlers.NewDatabaseMigrationHandler(store)
+	mux.HandleFunc("DELETE /api/internal/database/delete", databaseMigrationHandler.ApplyMigration)
+
 	handlerWithCORS := middlewares.CORS(mux)
 
 	fmt.Println("Server is running on http://localhost:8080")
