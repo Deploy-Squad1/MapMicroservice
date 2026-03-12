@@ -1,6 +1,7 @@
 name: Build and Push Map to ECR
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
 
 env:
   AWS_REGION: eu-north-1
