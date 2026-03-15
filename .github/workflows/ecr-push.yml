@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -30,13 +30,31 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           IMAGE_TAG=${{ github.sha }}
-          ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./map-service
+          REPO=$ECR_REGISTRY/$ECR_REPOSITORY
+          
+          echo "Building image with primary SHA tag: $IMAGE_TAG"
+          docker build -t $REPO:$IMAGE_TAG ./map-service
 
       - name: Push Docker image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           IMAGE_TAG=${{ github.sha }}
-          ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
-          docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
+          REPO=$ECR_REGISTRY/$ECR_REPOSITORY
+          
+          docker push $REPO:$IMAGE_TAG
+          
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            SECONDARY_TAG="stage"
+          elif [ "${{ github.ref_name }}" == "main" ]; then
+            SECONDARY_TAG="latest"
+          else
+            SECONDARY_TAG=$(echo "${{ github.ref_name }}" | tr '/' '-')
+          fi
+          
+          docker tag $REPO:$IMAGE_TAG $REPO:$SECONDARY_TAG
+          docker push $REPO:$SECONDARY_TAG
