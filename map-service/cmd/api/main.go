@@ -51,15 +51,15 @@ func main() {
 	artifactHandler := handlers.NewArtifactHandler(store, s3Storage)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /api/artifacts", middlewares.RequireRole()(artifactHandler.GetArtifacts))
-	mux.HandleFunc("POST /api/artifacts", middlewares.RequireRole("Silver", "Gold")(artifactHandler.CreateArtifact))
-	mux.HandleFunc("DELETE /api/artifacts/{id}", middlewares.RequireRole("Gold")(artifactHandler.DeleteArtifact))
-	mux.HandleFunc("POST /api/artifacts/{id}/photo", middlewares.RequireRole("Silver", "Gold")(artifactHandler.UploadPhoto))
-	mux.HandleFunc("POST /api/artifacts/{id}/confirm", middlewares.RequireRole()(artifactHandler.ConfirmArtifact))
-	mux.HandleFunc("DELETE /api/artifacts/{id}/unconfirm", middlewares.RequireRole()(artifactHandler.RemoveConfirmation))
+	mux.HandleFunc("GET /map/api/artifacts", middlewares.RequireRole()(artifactHandler.GetArtifacts))
+	mux.HandleFunc("POST /map/api/artifacts", middlewares.RequireRole("Silver", "Gold")(artifactHandler.CreateArtifact))
+	mux.HandleFunc("DELETE /map/api/artifacts/{id}", middlewares.RequireRole("Gold")(artifactHandler.DeleteArtifact))
+	mux.HandleFunc("POST /map/api/artifacts/{id}/photo", middlewares.RequireRole("Silver", "Gold")(artifactHandler.UploadPhoto))
+	mux.HandleFunc("POST /map/api/artifacts/{id}/confirm", middlewares.RequireRole()(artifactHandler.ConfirmArtifact))
+	mux.HandleFunc("DELETE /map/api/artifacts/{id}/unconfirm", middlewares.RequireRole()(artifactHandler.RemoveConfirmation))
 	// Internal endpoints
 	databaseMigrationHandler := handlers.NewDatabaseMigrationHandler(store)
-	mux.HandleFunc("DELETE /api/internal/database/delete", databaseMigrationHandler.ApplyMigration)
+	mux.HandleFunc("DELETE /map/api/internal/database/delete", databaseMigrationHandler.ApplyMigration)
 
 	handlerWithCORS := middlewares.CORS(mux)
 
